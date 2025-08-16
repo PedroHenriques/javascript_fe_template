@@ -1,0 +1,21 @@
+services:
+  api:
+    image: ${PROJECT_NAME:-myapp}_api:${IMAGE_TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: ./src/Api/Dockerfile
+    container_name: "api"
+    restart: on-failure
+    depends_on:
+      api_db:
+        condition: service_healthy
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    ports:
+      - ${API_PORT:-10000}:10000
+    networks:
+      - myapp_shared
+
+networks:
+  myapp_shared:
+    external: true
