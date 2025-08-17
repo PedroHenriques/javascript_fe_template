@@ -1,0 +1,11 @@
+{
+  "global": [
+    "window",
+    "document"
+  ],
+  "recursive": true,
+  "checkLeaks": true,
+  "fullTrace": true,
+  "timeout": 30000,
+  "R": "spec"
+}

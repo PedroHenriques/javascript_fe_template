@@ -1,0 +1,26 @@
+{
+	"compileOnSave": false,
+
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es5",
+		"lib": ["esnext", "dom"],
+		"outDir" : "src/js",
+		"jsx": "react",
+		"alwaysStrict" : true,
+		"noEmitOnError" : true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noFallthroughCasesInSwitch" : true,
+		"strictNullChecks": true,
+		"sourceMap": true,
+		"declaration": true,
+		"declarationDir": "src/js",
+		"watch": false
+	},
+
+	"include" : ["src/**/ts/**/*"],
+
+	"exclude": ["node_modules", "src/**/js"]
+}

@@ -1,0 +1,10 @@
+node_modules/
+
+TestResults/
+coverageReport/
+release/
+.sonarqube/
+
+.env
+
+.vscode/
