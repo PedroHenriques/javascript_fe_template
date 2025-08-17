@@ -2,8 +2,9 @@ node_modules/
 
 TestResults/
 coverageReport/
-release/
+dist/
 .sonarqube/
+.cache/
 
 .env
 

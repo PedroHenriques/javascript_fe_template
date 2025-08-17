@@ -59,7 +59,18 @@ module.exports = (env = {}, argv = {}) => {
       chunkFilename: isProd ? 'js/[name].[contenthash:8].js' : 'js/[name].js',
       clean: true,
     },
-    cache: { type: 'filesystem' },
+    cache: {
+      type: 'filesystem',
+      cacheDirectory: path.resolve(__dirname, '.cache/webpack'),
+      buildDependencies: {
+        config: [
+          __filename,
+          path.resolve(__dirname, 'tsconfig.json'),
+          path.resolve(__dirname, 'configLoader.js'),
+          path.resolve(__dirname, 'src', 'App', 'index.template.html'),
+        ]
+      },
+    },
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
       alias,
@@ -108,7 +119,7 @@ module.exports = (env = {}, argv = {}) => {
     optimization: isProd
       ? { minimizer: ['...', new CssMinimizerPlugin()], splitChunks: { chunks: 'all' }, runtimeChunk: 'single' }
       : undefined,
-    devtool: isProd ? 'source-map' : 'inline-source-map',
+    devtool: isProd ? 'hidden-source-map' : 'inline-source-map',
     devServer: isProd
       ? undefined
       : {
