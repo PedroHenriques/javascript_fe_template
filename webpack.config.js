@@ -1,11 +1,17 @@
 const path = require('path');
+const fs = require('fs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const getConfigs = require('./configLoader.js');
 
 const configs = getConfigs();
+
+const alias = {
+  '@app': path.resolve(__dirname, 'src', "App"),
+};
 
 const makeScssRule = (isProd, baseUrl) => {
   const use = [
@@ -37,21 +43,39 @@ module.exports = (env = {}, argv = {}) => {
   const isProd = argv.mode === 'production';
   const baseUrl = isProd ? '/games/minesweeper-v2/' : '/';
 
+  const faviconCandidates = [
+    path.resolve(__dirname, 'src', 'App', 'favicon.png'),
+    path.resolve(__dirname, 'src', 'App', 'favicon.ico'),
+  ];
+  const faviconPath = faviconCandidates.find(fs.existsSync);
+
   return {
     mode: isProd ? 'production' : 'development',
-    entry: ['whatwg-fetch', './src/ts/index.tsx'],
+    entry: ['whatwg-fetch', './src/App/index.tsx'],
     output: {
-      path: path.resolve(__dirname, 'dist'),
+      path: path.resolve(__dirname, 'src', 'App', 'dist'),
       publicPath: baseUrl,
       filename: isProd ? 'js/[name].[contenthash:8].js' : 'js/bundle.js',
       chunkFilename: isProd ? 'js/[name].[contenthash:8].js' : 'js/[name].js',
       clean: true,
     },
     cache: { type: 'filesystem' },
-    resolve: { extensions: ['.tsx', '.ts', '.js'] },
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js'],
+      alias,
+    },
     module: {
       rules: [
-        { test: /\.tsx?$/, use: 'ts-loader', exclude: /node_modules/ },
+        {
+          test: /\.tsx?$/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: { transpileOnly: true },
+            },
+          ],
+          exclude: /node_modules/,
+        },
         makeScssRule(isProd, baseUrl),
         {
           test: /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf)$/i,
@@ -63,9 +87,9 @@ module.exports = (env = {}, argv = {}) => {
     plugins: [
       new HtmlWebpackPlugin({
         inject: 'body',
-        template: path.resolve(__dirname, 'src', 'index.template.html'),
+        template: path.resolve(__dirname, 'src', 'App', 'index.template.html'),
         filename: 'index.html',
-        favicon: path.resolve(__dirname, 'src', 'favicon.png'),
+        ...(faviconPath ? { favicon: faviconPath } : {}),
         templateParameters: {
           PAGE_TITLE: configs.PAGE_TITLE,
         },
@@ -78,7 +102,8 @@ module.exports = (env = {}, argv = {}) => {
       new webpack.DefinePlugin({
         BASE_URL: JSON.stringify(baseUrl),
       }),
-      new webpack.WatchIgnorePlugin({ paths: [/\.js$/, /\.d\.ts$/] })
+      new webpack.WatchIgnorePlugin({ paths: [/\.js$/, /\.d\.ts$/] }),
+      new ForkTsCheckerWebpackPlugin(),
     ],
     optimization: isProd
       ? { minimizer: ['...', new CssMinimizerPlugin()], splitChunks: { chunks: 'all' }, runtimeChunk: 'single' }

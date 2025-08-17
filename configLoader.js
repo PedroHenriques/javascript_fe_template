@@ -17,7 +17,7 @@ function getConfigs() {
     );
 
     const userConfigPath = path.resolve(
-      __dirname, 'Configs', 'config.user.json'
+      __dirname, "src", "App", 'Configs', 'config.json'
     );
     const customConfigs = fs.existsSync(userConfigPath)
       ? JSON.parse(fs.readFileSync(userConfigPath, { encoding: 'utf8' }))
@@ -27,7 +27,7 @@ function getConfigs() {
 
     if (process.env.CICD === 'true') {
       const testsConfigPath = path.resolve(
-        __dirname, 'Configs', 'config.cicd.json'
+        __dirname, "test", 'Configs', 'config.json'
       );
 
       const testsConfigs = fs.existsSync(testsConfigPath)

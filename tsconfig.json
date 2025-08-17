@@ -1,26 +1,29 @@
 {
-	"compileOnSave": false,
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["src/App/*"],
+    },
 
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es5",
-		"lib": ["esnext", "dom"],
-		"outDir" : "src/js",
-		"jsx": "react",
-		"alwaysStrict" : true,
-		"noEmitOnError" : true,
-		"noImplicitAny": true,
-		"noImplicitReturns": true,
-		"noImplicitThis": true,
-		"noFallthroughCasesInSwitch" : true,
-		"strictNullChecks": true,
-		"sourceMap": true,
-		"declaration": true,
-		"declarationDir": "src/js",
-		"watch": false
-	},
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
 
-	"include" : ["src/**/ts/**/*"],
-
-	"exclude": ["node_modules", "src/**/js"]
+    "strict": true,
+    "noEmit": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "useDefineForClassFields": true,
+    "isolatedModules": true,
+    "noUncheckedIndexedAccess": true,
+  },
+  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
