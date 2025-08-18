@@ -1,11 +1,14 @@
 {
-  "global": [
-    "window",
-    "document"
+  "extension": [
+    "js"
+  ],
+  "spec": [
+    "./test/**/*.@(test|spec).js"
+  ],
+  "require": [
+    "source-map-support/register",
+    "./test/alias-register.js"
   ],
   "recursive": true,
-  "checkLeaks": true,
-  "fullTrace": true,
-  "timeout": 30000,
-  "R": "spec"
+  "timeout": 8000
 }

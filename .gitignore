@@ -5,6 +5,7 @@ coverageReport/
 dist/
 .sonarqube/
 .cache/
+.test-build/
 
 .env
 
