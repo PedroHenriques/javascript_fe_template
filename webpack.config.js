@@ -119,14 +119,22 @@ module.exports = (env = {}, argv = {}) => {
     optimization: isProd
       ? { minimizer: ['...', new CssMinimizerPlugin()], splitChunks: { chunks: 'all' }, runtimeChunk: 'single' }
       : undefined,
+    watchOptions: {
+      poll: Number(process.env.WEBPACK_WATCH_POLL) || 500,
+      ignored: /node_modules/,
+      aggregateTimeout: 200
+    },
     devtool: isProd ? 'hidden-source-map' : 'inline-source-map',
     devServer: isProd
       ? undefined
       : {
-          port: 3000,
-          open: true,
+          port: Number(process.env.APP_PORT) || 3000,
           hot: true,
           historyApiFallback: true,
+          host: '0.0.0.0',
+          allowedHosts: 'all',
+          open: false,
+          static: false,
         },
   };
 };
