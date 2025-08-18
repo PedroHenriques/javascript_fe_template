@@ -4,7 +4,7 @@ const path = require('path');
 
 let configs;
 
-function getConfigs() {
+function getConfigs(service) {
   if (configs === undefined) {
     const defaultConfigPath = path.resolve(
       __dirname, 'Configs', 'config.default.json'
@@ -17,7 +17,7 @@ function getConfigs() {
     );
 
     const userConfigPath = path.resolve(
-      __dirname, "src", "App", 'Configs', 'config.json'
+      __dirname, "src", service, 'Configs', 'config.json'
     );
     const customConfigs = fs.existsSync(userConfigPath)
       ? JSON.parse(fs.readFileSync(userConfigPath, { encoding: 'utf8' }))

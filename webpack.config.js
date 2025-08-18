@@ -7,8 +7,6 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const getConfigs = require('./configLoader.js');
 
-const configs = getConfigs();
-
 const alias = {
   '@app': path.resolve(__dirname, 'src', "App"),
 };
@@ -41,19 +39,22 @@ const makeScssRule = (isProd, baseUrl) => {
 
 module.exports = (env = {}, argv = {}) => {
   const isProd = argv.mode === 'production';
-  const baseUrl = isProd ? '/games/minesweeper-v2/' : '/';
+  const service = process.env.SERVICE;
+  const baseUrl = process.env.BASE_URL;
+
+  const configs = getConfigs(service);
 
   const faviconCandidates = [
-    path.resolve(__dirname, 'src', 'App', 'favicon.png'),
-    path.resolve(__dirname, 'src', 'App', 'favicon.ico'),
+    path.resolve(__dirname, 'src', service, 'favicon.png'),
+    path.resolve(__dirname, 'src', service, 'favicon.ico'),
   ];
   const faviconPath = faviconCandidates.find(fs.existsSync);
 
   return {
     mode: isProd ? 'production' : 'development',
-    entry: ['whatwg-fetch', './src/App/index.tsx'],
+    entry: ['whatwg-fetch', `./src/${service}/index.tsx`],
     output: {
-      path: path.resolve(__dirname, 'src', 'App', 'dist'),
+      path: path.resolve(__dirname, 'src', service, 'dist'),
       publicPath: baseUrl,
       filename: isProd ? 'js/[name].[contenthash:8].js' : 'js/bundle.js',
       chunkFilename: isProd ? 'js/[name].[contenthash:8].js' : 'js/[name].js',
@@ -67,7 +68,7 @@ module.exports = (env = {}, argv = {}) => {
           __filename,
           path.resolve(__dirname, 'tsconfig.json'),
           path.resolve(__dirname, 'configLoader.js'),
-          path.resolve(__dirname, 'src', 'App', 'index.template.html'),
+          path.resolve(__dirname, 'src', service, 'index.template.html'),
         ]
       },
     },
@@ -98,7 +99,7 @@ module.exports = (env = {}, argv = {}) => {
     plugins: [
       new HtmlWebpackPlugin({
         inject: 'body',
-        template: path.resolve(__dirname, 'src', 'App', 'index.template.html'),
+        template: path.resolve(__dirname, 'src', service, 'index.template.html'),
         filename: 'index.html',
         ...(faviconPath ? { favicon: faviconPath } : {}),
         templateParameters: {

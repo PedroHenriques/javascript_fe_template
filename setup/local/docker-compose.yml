@@ -11,6 +11,8 @@ services:
       - WEBPACK_WATCH_POLL="500"
       - PUPPETEER_SKIP_DOWNLOAD="true"
       - APP_PORT=${APP_PORT:-10000}
+      - BASE_URL=${BASE_URL:-/}
+      - SERVICE=App
     ports:
       - ${APP_PORT:-10000}:${APP_PORT:-10000}
     volumes:
