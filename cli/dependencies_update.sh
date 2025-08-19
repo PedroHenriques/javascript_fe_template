@@ -28,6 +28,7 @@ if [ $USE_DOCKER -eq 1 ]; then
     INTERACTIVE_FLAGS="-i";
   fi
 
+  docker network create myapp_shared || true;
   docker run --rm ${INTERACTIVE_FLAGS} -v "./:/app/" -w "/app/" node:24-bullseye-slim /bin/sh -c "${CMD}";
 else
   eval "${CMD}";
