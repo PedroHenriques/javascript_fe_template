@@ -8,8 +8,10 @@
     "test": "test"
   },
   "scripts": {
-    "pretest": "rimraf .test-build && tsc -p tsconfig.test-build.json",
-    "test": "mocha --config ./test/.mocharc.json",
+    "build:test": "rimraf .test-build && tsc -p tsconfig.test-build.json",
+    "test": "npm run build:test && mocha --config ./test/.mocharc.json",
+    "test:coverage": "npm run build:test && C8_REPORT_DIR=${C8_REPORT_DIR} c8 --report-dir=${C8_REPORT_DIR} mocha --config ./test/.mocharc.json",
+    "coverage:report": "c8 report --reporter=lcov --reporter=text-summary",
     "watch:build": "tsc -p tsconfig.test-build.json -w --preserveWatchOutput",
     "watch:test": "mocha --config ./test/.mocharc.json --watch --watch-files \"test/**/*.js\" --watch-files \".test-build/**/*.js\"",
     "test:watch": "concurrently -k -n BUILD,TEST -c blue,green \"npm:watch:build\" \"npm:watch:test\"",

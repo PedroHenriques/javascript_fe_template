@@ -2,7 +2,7 @@
 set -e;
 
 : "${TEST_COVERAGE_DIR_PATH:=coverageReport}";
-: "${TEST_COVERAGE_FILE_NAME:=coverage.opencover.xml}";
+: "${TEST_COVERAGE_FILE_NAME:=lcov.info}";
 
 USE_DOCKER=0;
 RUNNING_IN_PIPELINE=0;
@@ -29,11 +29,9 @@ if [ $USE_DOCKER -eq 0 ]; then
   rm -rf ./${TEST_COVERAGE_DIR_PATH};
 fi
 
-find . -type d -name "TestResults" -exec rm -rf {} +;
+find . -type d -name "${TEST_COVERAGE_DIR_PATH}" -exec rm -rf {} +;
 
-sh ./cli/test.sh --coverage $DOCKER_FLAG $CICD_FLAG;
-
-CMD="dotnet tool restore; dotnet reportgenerator -reports:\"./test/**/${TEST_COVERAGE_FILE_NAME}\" -targetdir:\"${TEST_COVERAGE_DIR_PATH}\" -reporttypes:Html;";
+CMD="C8_REPORT_DIR='${TEST_COVERAGE_DIR_PATH}' npm run test:coverage -- \"./test/unit/**/*.@(test|spec).js\""
 
 if [ $USE_DOCKER -eq 1 ]; then
   INTERACTIVE_FLAGS="-it";
@@ -42,7 +40,7 @@ if [ $USE_DOCKER -eq 1 ]; then
   fi
 
   docker network create myapp_shared || true;
-  docker run --rm ${INTERACTIVE_FLAGS} -v "./:/app/" -w "/app/" mcr.microsoft.com/dotnet/sdk:8.0-noble /bin/sh -c "${CMD}";
+  docker run --rm ${INTERACTIVE_FLAGS} -v "./:/app/" -w "/app/" node:24-bullseye-slim /bin/sh -c "${CMD}";
 else
   eval "${CMD}";
 fi
