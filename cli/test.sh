@@ -15,7 +15,7 @@ while [ "$#" -gt 0 ]; do
     -w|--watch) WATCH=1; shift 1;;
     --docker) USE_DOCKER=1; shift 1;;
     --cicd) RUNNING_IN_PIPELINE=1; USE_DOCKER=1; shift 1;;
-    --filter) FILTERS="--filter ${2}"; shift 2;;
+    --filter) FILTERS="${2}"; shift 2;;
     --unit) FILTERS="test/unit"; TEST_TYPE="unit"; shift 1;;
     --integration) FILTERS="test/integration"; TEST_TYPE="integration"; RUN_LOCAL_ENV=1; USE_DOCKER=1; shift 1;;
     --e2e) FILTERS="test/e2e"; TEST_TYPE="e2e"; RUN_LOCAL_ENV=1; USE_DOCKER=1; shift 1;;
