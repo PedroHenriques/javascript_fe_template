@@ -31,7 +31,7 @@ if [ ! -f "${TEST_COVERAGE_DIR_PATH}/${TEST_COVERAGE_FILE_NAME}" ]; then
   TEST_COVERAGE_DIR_PATH="${TEST_COVERAGE_DIR_PATH}" TEST_COVERAGE_FILE_NAME="${TEST_COVERAGE_FILE_NAME}" sh cli/coverage.sh ${FLAGS};
 fi
 
-CMD="sonar-scanner";
+CMD="npm ci && sonar-scanner";
 
 if [ $USE_DOCKER -eq 1 ]; then
   INTERACTIVE_FLAGS="-it";
@@ -40,7 +40,7 @@ if [ $USE_DOCKER -eq 1 ]; then
   fi
 
   docker network create myapp_shared || true;
-  docker run --rm ${INTERACTIVE_FLAGS} -v "./:/app/" -w "/app/" -e TEST_COVERAGE_DIR_PATH -e TEST_COVERAGE_FILE_NAME -e EXTERNAL_STATIC_ANALYSIS_PROJ_KEY -e EXTERNAL_STATIC_ANALYSIS_ORG -e EXTERNAL_STATIC_ANALYSIS_HOST -e SONAR_TOKEN="${EXTERNAL_STATIC_ANALYSIS_TOKEN}" sonarsource/sonar-scanner-cli:latest /bin/sh -c "${CMD}";
+  docker run --rm ${INTERACTIVE_FLAGS} -v "./:/app/" -w "/app/" -e TEST_COVERAGE_DIR_PATH -e TEST_COVERAGE_FILE_NAME -e EXTERNAL_STATIC_ANALYSIS_PROJ_KEY -e EXTERNAL_STATIC_ANALYSIS_ORG -e EXTERNAL_STATIC_ANALYSIS_HOST -e SONAR_TOKEN="${EXTERNAL_STATIC_ANALYSIS_TOKEN}" -e SONAR_SCANNER_OPTS="-Dsonar.working.directory=/tmp/.scannerwork" sonarsource/sonar-scanner-cli:latest /bin/sh -c "${CMD}";
 else
   export TEST_COVERAGE_DIR_PATH TEST_COVERAGE_FILE_NAME;
   eval "${CMD}";
