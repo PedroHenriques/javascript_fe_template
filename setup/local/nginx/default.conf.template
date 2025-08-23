@@ -1,0 +1,27 @@
+server {
+  listen 80;
+  charset utf-8;
+
+  # Env-injected by Docker
+  set $base_path "${BASE_PATH}";
+  set $dist_root "/app/src/${SERVICE}/dist";
+
+  # Normalize the request URI by removing the base_path prefix (if present).
+  # If BASE_PATH="/", this matches '^/(.*)$' and rewrites to '/$1' (no-op).
+  rewrite ^${BASE_PATH}(.*)$ /$1 break;
+
+  # Cache immutable hashed assets aggressively
+  location ~* \.(?:js|css|png|jpg|jpeg|gif|svg|woff2?|ttf|eot)$ {
+    root $dist_root;
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+    try_files $uri =404;
+  }
+
+  # SPA fallback
+  location / {
+    root $dist_root;
+    index index.html;
+    try_files $uri $uri/ /index.html;
+  }
+}
