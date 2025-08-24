@@ -4,7 +4,7 @@ server {
 
   # Env-injected by Docker
   set $base_path "${BASE_PATH}";
-  set $dist_root "/app/src/${SERVICE}/dist";
+  set $dist_root "/app/${SERVICE}";
 
   # Normalize the request URI by removing the base_path prefix (if present).
   # If BASE_PATH="/", this matches '^/(.*)$' and rewrites to '/$1' (no-op).

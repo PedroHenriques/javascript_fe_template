@@ -24,7 +24,7 @@ services:
     depends_on:
       - builder
     environment:
-      # Which service folder under ./src to serve
+      # Which service folder under ./dist to serve
       SERVICE: ${SERVICE:-App}
       # Where the app is mounted in the URL (must match what you built with BASE_URL)
       # Use "/" for root, or "/myapp/" (with leading & trailing slash) for a sub-path
@@ -33,9 +33,7 @@ services:
       # Host port : container port (nginx listens on 80)
       - ${APP_PORT:-10000}:80
     volumes:
-      # Mount the repo root at /app (dist will be under /app/src/<SERVICE>/dist)
-      - ../../:/app:ro
-      # Feed a templated nginx config that expands $SERVICE and $BASE_PATH
+      - ../../dist/:/app:ro
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     networks:
       - nginx
