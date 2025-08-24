@@ -4,14 +4,13 @@ services:
     container_name: "builder"
     working_dir: /app
     environment:
-      SERVICE: ${SERVICE:-App}
       BASE_URL: ${BASE_PATH:-/}
     volumes:
       - ../../:/app
     command: >
       sh -lc "
         if [ ! -d node_modules ]; then npm ci; fi &&
-        npm run build:prod &&
+        chmod +x ./cli/build_dist.sh && ./cli/build_dist.sh --base-per-service &&
         tail -f /dev/null
       "
     networks:
@@ -21,16 +20,17 @@ services:
     image: nginx:1.27-alpine
     container_name: "nginx"
     restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost${BASE_PATH:-/}"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
     depends_on:
       - builder
     environment:
-      # Which service folder under ./dist to serve
-      SERVICE: ${SERVICE:-App}
-      # Where the app is mounted in the URL (must match what you built with BASE_URL)
-      # Use "/" for root, or "/myapp/" (with leading & trailing slash) for a sub-path
       BASE_PATH: ${BASE_PATH:-/}
+      DEFAULT_SERVICE: ${DEFAULT_SERVICE:-App}
     ports:
-      # Host port : container port (nginx listens on 80)
       - ${APP_PORT:-10000}:80
     volumes:
       - ../../dist/:/app:ro
