@@ -34,8 +34,18 @@ if [ ! -f "${TEST_COVERAGE_DIR_PATH}/${TEST_COVERAGE_FILE_NAME}" ]; then
 fi
 
 EXTRA_OPTS=""
-if [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ]; then
-  EXTRA_OPTS="$EXTRA_OPTS -Dsonar.pullrequest.key=${GITHUB_REF_NAME#refs/pull/} -Dsonar.pullrequest.branch=${GITHUB_HEAD_REF} -Dsonar.pullrequest.base=${GITHUB_BASE_REF}";
+PR_KEY=""
+
+if [ -n "${GITHUB_EVENT_PATH:-}" ] && [ -f "${GITHUB_EVENT_PATH}" ]; then
+  PR_KEY="$(grep -o '"number":[[:space:]]*[0-9]\+' "${GITHUB_EVENT_PATH}" | head -1 | grep -o '[0-9]\+' || true)";
+fi
+
+if [ -z "${PR_KEY}" ] && [ -n "${GITHUB_REF:-}" ]; then
+  PR_KEY="$(printf '%s\n' "${GITHUB_REF}" | sed -n 's#refs/pull/\([0-9]\+\)/.*#\1#p')";
+fi
+
+if [ -n "${PR_KEY}" ]; then
+  EXTRA_OPTS="$EXTRA_OPTS -Dsonar.pullrequest.key=${PR_KEY} -Dsonar.pullrequest.branch=${GITHUB_HEAD_REF} -Dsonar.pullrequest.base=${GITHUB_BASE_REF}";
 else
   EXTRA_OPTS="$EXTRA_OPTS -Dsonar.branch.name=${GITHUB_REF_NAME}";
 fi
