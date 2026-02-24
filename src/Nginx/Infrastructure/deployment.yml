@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${SERVICE}-deployment
+  namespace: ${NAMESPACE}
+  labels:
+    app: ${SERVICE}
+    env: ${ENVIRONMENT}
+    version: "${IMG_TAG}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${SERVICE}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: ${SERVICE}
+        env: ${ENVIRONMENT}
+        version: "${IMG_TAG}"
+    spec:
+      serviceAccountName: ${SERVICE}-service-account
+      containers:
+        - name: ${SERVICE}
+          image: ${IMG_NAME}:${IMG_TAG}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: ${NGINX_PORT}
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+          envFrom:
+            - configMapRef:
+                name: ${SERVICE}-config-${BUILD_TIMESTAMP}
+            - secretRef:
+                name: ${SERVICE}-secret-${BUILD_TIMESTAMP}
+          resources:
+            requests:
+              memory: ${NGINX_REQ_RAM}
+              cpu: ${NGINX_REQ_CPU}
+            limits:
+              memory: ${NGINX_LIMIT_RAM}
+              cpu: ${NGINX_LIMIT_CPU}
