@@ -28,4 +28,5 @@ fi
 
 docker network create myapp_shared || true;
 
+sh ./cli/build.sh --cicd;
 docker compose -f setup/local/docker-compose.nginx.yml -p myapp_nginx up --no-build "$@";
