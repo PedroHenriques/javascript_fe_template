@@ -3,7 +3,7 @@ services:
     image: ${PROJECT_NAME:-myapp}_app:${IMAGE_TAG:-latest}
     build:
       context: ../../
-      dockerfile: ./src/App/Dockerfile
+      dockerfile: ./src/App/Dockerfile_local
     container_name: "app"
     restart: on-failure
     environment:
