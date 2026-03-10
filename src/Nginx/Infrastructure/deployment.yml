@@ -37,8 +37,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: ${SERVICE}-config-${BUILD_TIMESTAMP}
-            - secretRef:
-                name: ${SERVICE}-secret-${BUILD_TIMESTAMP}
           resources:
             requests:
               memory: ${NGINX_REQ_RAM}
