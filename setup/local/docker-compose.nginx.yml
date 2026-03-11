@@ -4,6 +4,9 @@ services:
     build:
       context: ../../
       dockerfile: ./src/Nginx/Dockerfile
+      args:
+        BASE_URL: ${BASE_URL:-/}
+        SRC_DIR: ${SRC_DIR:-src}
     container_name: "nginx"
     restart: on-failure
     healthcheck:
@@ -14,8 +17,9 @@ services:
     environment:
       BASE_PATH: ${BASE_PATH:-/}
       DEFAULT_SERVICE: ${DEFAULT_SERVICE:-App}
+      LISTEN_PORT: ${APP_NGINX_PORT:-10001}
     ports:
-      - ${APP_NGINX_PORT:-10001}:80
+      - ${APP_NGINX_PORT:-10001}:${APP_NGINX_PORT:-10001}
     networks:
       - nginx
 

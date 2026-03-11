@@ -1,5 +1,5 @@
 server {
-  listen 80;
+  listen ${LISTEN_PORT};
   charset utf-8;
 
   # BASE_PATH: "/" or "/prefix/" (must have leading+trailing slash)
