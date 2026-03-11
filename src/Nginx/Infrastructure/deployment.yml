@@ -31,9 +31,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: ${NGINX_PORT}
-          securityContext:
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
           envFrom:
             - configMapRef:
                 name: ${SERVICE}-config-${BUILD_TIMESTAMP}
