@@ -45,13 +45,18 @@ else
     mapfile -t SERVICES < <(find "${SRC_DIR}" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort);
   fi
 
+  ORIGINAL_BASE_URL="${BASE_URL:-/}";
   for service in "${SERVICES[@]}"; do
     echo "▶ Building: ${service}";
 
     if [ $BASE_PER_SERVICE -eq 1 ]; then
-      export BASE_URL="/${service}/";
+      if [ "$ORIGINAL_BASE_URL" = "/" ]; then
+        export BASE_URL="/${service}/";
+      else
+        export BASE_URL="${ORIGINAL_BASE_URL%/}/${service}/";
+      fi
     else
-      export BASE_URL="${BASE_URL}";
+      export BASE_URL="${ORIGINAL_BASE_URL}";
     fi
 
     export SERVICE="${service}";
@@ -61,4 +66,3 @@ else
     npm run build:prod;
   done
 fi
-
