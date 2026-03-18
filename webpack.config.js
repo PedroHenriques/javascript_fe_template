@@ -50,6 +50,13 @@ module.exports = (env = {}, argv = {}) => {
   ];
   const faviconPath = faviconCandidates.find(fs.existsSync);
 
+  const reactAppEnvDefinitions = Object.entries(process.env)
+    .filter(([key]) => key.startsWith('REACT_APP_'))
+    .reduce((acc, [key, value]) => {
+      acc[`process.env.${key}`] = JSON.stringify(value);
+      return acc;
+    }, {});
+
   return {
     mode: isProd ? 'production' : 'development',
     entry: ['whatwg-fetch', `./src/${service}/index.tsx`],
@@ -113,6 +120,7 @@ module.exports = (env = {}, argv = {}) => {
       ),
       new webpack.DefinePlugin({
         BASE_URL: JSON.stringify(baseUrl),
+        ...reactAppEnvDefinitions,
       }),
       new webpack.WatchIgnorePlugin({ paths: [/\.js$/, /\.d\.ts$/] }),
       new ForkTsCheckerWebpackPlugin(),
