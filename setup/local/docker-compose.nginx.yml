@@ -5,8 +5,10 @@ services:
       context: ../../
       dockerfile: ./src/Nginx/Dockerfile
       args:
-        BASE_URL: ${BASE_URL:-/}
-        SRC_DIR: ${SRC_DIR:-src}
+        BUILD_ENV_FILE: |
+          BASE_URL=${BASE_URL:-/}
+          SRC_DIR=${SRC_DIR:-src}
+          REACT_APP_ENV=${ENV}
     container_name: "nginx"
     restart: on-failure
     healthcheck:

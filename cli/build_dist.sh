@@ -38,8 +38,17 @@ if [ $USE_DOCKER -eq 1 ]; then
     INTERACTIVE_FLAGS="-i";
   fi
 
+  ENV_ARGS=()
+while IFS='=' read -r name _; do
+  case "$name" in
+    REACT_APP_*|BASE_URL|SRC_DIR|SERVICE|NODE_ENV)
+      ENV_ARGS+=("-e" "$name")
+      ;;
+  esac
+done < <(env)
+
   docker network create myapp_shared || true;
-  docker run --rm ${INTERACTIVE_FLAGS} --network=myapp_shared -v "./:/app/" -w "/app/" -e BASE_URL -e SRC_DIR node:24-bullseye-slim /bin/bash -lc "if [ ! -d node_modules ]; then npm ci; fi && chmod +x ./cli/build_dist.sh && ./cli/build_dist.sh ${ARG_STR}";
+  docker run --rm ${INTERACTIVE_FLAGS} --network=myapp_shared -v "./:/app/" -w "/app/" "${ENV_ARGS[@]}" node:24-bullseye-slim /bin/bash -lc "if [ ! -d node_modules ]; then npm ci; fi && chmod +x ./cli/build_dist.sh && ./cli/build_dist.sh ${ARG_STR}";
 else
   if ((${#SERVICES[@]}==0)); then
     mapfile -t SERVICES < <(find "${SRC_DIR}" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort);
