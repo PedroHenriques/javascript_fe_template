@@ -4,10 +4,6 @@ set -euo pipefail;
 : "${BASE_URL:=/}";
 : "${SRC_DIR:=src}";
 
-echo "BASE_URL: ${BASE_URL}\n";
-echo "SRC_DIR: ${SRC_DIR}\n";
-echo "REACT_APP_ENV: ${REACT_APP_ENV}\n";
-
 USE_DOCKER=0;
 RUNNING_IN_PIPELINE=0;
 BASE_PER_SERVICE=0;
