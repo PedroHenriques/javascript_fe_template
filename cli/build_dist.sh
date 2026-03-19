@@ -6,7 +6,7 @@ set -euo pipefail;
 
 ACCEPTED_ENV_PATTERNS=(
   '.*'
-)
+);
 
 USE_DOCKER=0;
 RUNNING_IN_PIPELINE=0;
@@ -14,16 +14,16 @@ BASE_PER_SERVICE=0;
 SERVICES=();
 
 is_allowed_env_name() {
-  local name="$1"
-  local pattern
+  local name="$1";
+  local pattern;
 
   for pattern in "${ACCEPTED_ENV_PATTERNS[@]}"; do
     if [[ "$name" =~ $pattern ]]; then
-      return 0
+      return 0;
     fi
   done
 
-  return 1
+  return 1;
 }
 
 while [ "$#" -gt 0 ]; do
@@ -55,10 +55,10 @@ if [ $USE_DOCKER -eq 1 ]; then
     INTERACTIVE_FLAGS="-i";
   fi
 
-  ENV_ARGS=()
+  ENV_ARGS=();
   while IFS='=' read -r name _; do
     if is_allowed_env_name "$name"; then
-      ENV_ARGS+=("-e" "$name")
+      ENV_ARGS+=("-e" "$name");
     fi
   done < <(env)
 
