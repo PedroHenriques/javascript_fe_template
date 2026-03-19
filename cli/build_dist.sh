@@ -4,10 +4,27 @@ set -euo pipefail;
 : "${BASE_URL:=/}";
 : "${SRC_DIR:=src}";
 
+ACCEPTED_ENV_PATTERNS=(
+  '.*'
+)
+
 USE_DOCKER=0;
 RUNNING_IN_PIPELINE=0;
 BASE_PER_SERVICE=0;
 SERVICES=();
+
+is_allowed_env_name() {
+  local name="$1"
+  local pattern
+
+  for pattern in "${ACCEPTED_ENV_PATTERNS[@]}"; do
+    if [[ "$name" =~ $pattern ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -40,11 +57,9 @@ if [ $USE_DOCKER -eq 1 ]; then
 
   ENV_ARGS=()
   while IFS='=' read -r name _; do
-    case "$name" in
-      REACT_APP_*|BASE_URL|SRC_DIR|SERVICE|NODE_ENV)
-        ENV_ARGS+=("-e" "$name")
-        ;;
-    esac
+    if is_allowed_env_name "$name"; then
+      ENV_ARGS+=("-e" "$name")
+    fi
   done < <(env)
 
   docker network create myapp_shared || true;
