@@ -11,6 +11,10 @@ const alias = {
   '@app': path.resolve(__dirname, 'src', "App"),
 };
 
+const ACCEPTED_ENV_PATTERNS = [
+  /.*/,
+];
+
 const makeScssRule = (isProd, baseUrl) => {
   const use = [
     { loader: 'css-loader', options: { url: false, sourceMap: !isProd } },
@@ -51,7 +55,7 @@ module.exports = (env = {}, argv = {}) => {
   const faviconPath = faviconCandidates.find(fs.existsSync);
 
   const reactAppEnvDefinitions = Object.entries(process.env)
-    .filter(([key]) => key.startsWith('REACT_APP_'))
+    .filter(([key]) => ACCEPTED_ENV_PATTERNS.some((pattern) => pattern.test(key)))
     .reduce((acc, [key, value]) => {
       acc[`process.env.${key}`] = JSON.stringify(value);
       return acc;
