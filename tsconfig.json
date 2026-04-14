@@ -23,6 +23,7 @@
     "useDefineForClassFields": true,
     "isolatedModules": true,
     "noUncheckedIndexedAccess": true,
+    "types": [ "node" ],
   },
   "include": ["src/**/*.tsx", "src/**/*.ts"],
   "exclude": ["node_modules", "dist", "test"]
