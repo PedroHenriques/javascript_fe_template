@@ -3,4 +3,3 @@ test/
 setup/local/.env.template
 documentation/app_arch.png
 CHANGELOG.md
-package-lock.json
